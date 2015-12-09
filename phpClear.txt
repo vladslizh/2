@@ -1,0 +1,172 @@
+<?php 
+ 
+  $birthday = mktime
+(
+0, 0, 0, 1, 24, 1985);
+  echo birthday
+(
+$birthday);
+
+ 
+  function birthday
+(
+$sec_birthday)
+  
+{
+
+
+    function birthdayASD
+(
+$sec_birthday)
+  
+{
+
+   
+   
+    $sec_now = time
+(
+);
+   
+    str1=;
+    for
+(
+$time = $sec_birthday, $month = 0)
+        
+{
+ 
+        $time < $sec_now; 
+        $time = $time + date
+(
+, $time) * 86400, $month = $month + 1)
+        $rtime = $time;
+        
+}
+
+    $month = $month - 1;
+   
+    $year = intval
+(
+$month / 12);
+   
+    $month = $month % 12;
+   
+    $day = intval
+(
+($sec_now - $rtime) / 86400);
+    $result = declination
+(
+$year, , , ).;
+    $result .= declination
+(
+$month, , , ).;
+    $result .= declination
+(
+$day, , , ).;
+    return $result;
+    str2=;
+  
+}
+
+   
+   
+    $sec_now = time
+(
+);
+   
+    str1=;
+    for
+(
+$time = $sec_birthday, $month = 0)
+        
+{
+ 
+        $time < $sec_now; 
+        $time = $time + date
+(
+, $time) * 86400, $month = $month + 1)
+        $rtime = $time;
+        
+}
+
+    $month = $month - 1;
+   
+    $year = intval
+(
+$month / 12);
+   
+    $month = $month % 12;
+   
+    $day = intval
+(
+($sec_now - $rtime) / 86400);
+    $result = declination
+(
+$year, , , ).;
+    $result .= declination
+(
+$month, , , ).;
+    $result .= declination
+(
+$day, , , ).;
+    return $result;
+    str2=;
+  
+}
+
+
+
+ 
+  function declination
+(
+$num, $one, $ed, $mn, $notnumber = false)
+  
+{
+  
+   
+   
+   
+    if
+(
+$num === ) print ;
+    if
+(
+($num == ) or 
+(
+($num >= ) and 
+(
+$num <= )) or preg_match
+(
+,$num))
+      if
+(
+$notnumber)
+        return ;
+      else
+        return $mn;
+    if
+(
+preg_match
+(
+,$num))
+      if
+(
+$notnumber)
+        return ;
+      else
+        return $one;
+    if
+(
+preg_match
+(
+,$num))
+      if
+(
+$notnumber)
+        return ;
+      else
+        return $ed;
+  
+}
+
+  
+?>

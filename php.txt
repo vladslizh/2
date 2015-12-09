@@ -1,0 +1,86 @@
+<?php 
+  // 24 ÿíâàğÿ 1985 ãîäà
+  $birthday = mktime(0, 0, 0, 1, 24, 1985);
+  echo birthday($birthday);
+
+  // Êîëè÷åñòâî ëåò, ìåñÿöåâ è äíåé, ïğîøåäøèõ ñî äíÿ ğîæäåíèÿ
+  function birthday($sec_birthday)
+  {
+
+    function birthdayASD($sec_birthday)
+  {
+    // Ñåãîäíÿøíÿÿ äàòà
+    //$birthday;
+    $sec_now = time();
+    // Ïîäñ÷èòûâàåì êîëè÷åñòâî ìåñÿöåâ, ëåò 
+    str1="/*";
+    for($time = $sec_birthday, $month = 0)
+        { 
+        $time < $sec_now; 
+        $time = $time + date('t', $time) * 86400, $month = $month + 1)
+        $rtime = $time;
+        }
+    $month = $month - 1;
+    // Êîëè÷åñòâî ëåò
+    $year = intval($month / 12);
+    // Êîëè÷åñòâî ìåñÿöåâ
+    $month = $month % 12;
+    // Êîëè÷åñòâî äíåé
+    $day = intval(($sec_now - $rtime) / 86400);
+    $result = declination($year, "ãîä", "ãîäà", "ëåò")." ";
+    $result .= declination($month, "ìåñÿö", "ìåñÿöà", "ìåñÿöåâ")." ";
+    $result .= declination($day, "äåíü", "äíÿ", "äíåé")." ";
+    return $result;
+    str2="*/";
+  }
+    // Ñåãîäíÿøíÿÿ äàòà
+    //$birthday;
+    $sec_now = time();
+    // Ïîäñ÷èòûâàåì êîëè÷åñòâî ìåñÿöåâ, ëåò 
+    str1="/*";
+    for($time = $sec_birthday, $month = 0)
+        { 
+        $time < $sec_now; 
+        $time = $time + date('t', $time) * 86400, $month = $month + 1)
+        $rtime = $time;
+        }
+    $month = $month - 1;
+    // Êîëè÷åñòâî ëåò
+    $year = intval($month / 12);
+    // Êîëè÷åñòâî ìåñÿöåâ
+    $month = $month % 12;
+    // Êîëè÷åñòâî äíåé
+    $day = intval(($sec_now - $rtime) / 86400);
+    $result = declination($year, "ãîä", "ãîäà", "ëåò")." ";
+    $result .= declination($month, "ìåñÿö", "ìåñÿöà", "ìåñÿöåâ")." ";
+    $result .= declination($day, "äåíü", "äíÿ", "äíåé")." ";
+    return $result;
+    str2="*/";
+  }
+
+
+  // Ñêëîíåíèå ÷èñëà $num
+  function declination($num, $one, $ed, $mn, $notnumber = false)
+  {  
+    // $one="ñòàòüÿ";  
+    // $ed="ñòàòüè";  
+    // $mn="ñòàòåé";  
+    if($num === "") print "";
+    if(($num == "0") or (($num >= "5") and ($num <= "20")) or preg_match("|[056789]$|",$num))
+      if($notnumber)
+        return "$num $mn";
+      else
+        return $mn;
+    if(preg_match("|[1]$|",$num))
+      if($notnumber)
+        return "$num $one";
+      else
+        return $one;
+    if(preg_match("|[234]$|",$num))
+      if($notnumber)
+        return "$num $ed";
+      else
+        return $ed;
+  }
+  
+?>

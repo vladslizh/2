@@ -1,0 +1,253 @@
+program Project2;
+
+{$APPTYPE CONSOLE}
+
+uses
+  SysUtils;
+
+type
+
+  TArrNameVariable=array[1..250] of string;
+  TArrSumVariable=array[1..250] of integer;
+
+var
+   f: textfile;
+   ArrayNameLocalVariable:TArrNameVariable;
+   ArraySumLocalVariable:TArrSumVariable;
+   line,Token: string;
+   Current: integer;
+
+ procedure CreateClearFile();
+   var
+   fIn,fOut: textfile;
+   current: integer;
+   line:string;
+   quotes,oneLineComment,ManyLineComment,quote: boolean;
+
+   begin
+   assign(fIn,'php.txt');
+   reset(fIn);
+   assign(fOut,'phpClear.txt');
+   rewrite(fOut);
+
+   quotes:=false;
+   ManyLineComment:=false;
+   quote:=false;
+   while not Eof(fIn) do
+     begin
+     readln(fIn,line);
+     current:=1;
+     oneLineComment:=false;
+     while (current<=length(line)) do
+         begin
+
+         if quotes then
+            begin
+            if line[current]='"' then quotes:=false;
+            delete(line,current,1);
+            current:=current-1;
+            if line='' then break;
+            end;
+
+         if quote then
+            begin
+            if line[current]=#39 then quote:=false;
+            delete(line,current,1);
+            current:=current-1;
+            if line='' then break;
+            end;
+
+         if ManyLineComment then
+          begin
+          if (line[current]='*') and (line[current+1]='/')
+          then
+            begin
+            ManyLineComment:=false;
+            delete(line,current,1);
+            end;
+          delete(line,current,1);
+          current:=current-1;
+          if line='' then break;
+          end;
+
+         if oneLineComment then
+            begin
+            delete(line,current,length(line)-current+1);
+            end;
+
+         if not (oneLineComment or quotes or ManyLineComment or quotes) then
+            begin
+            if (line[current]='{') or (line[current]='}') then
+              begin
+              writeln(fOut,copy(line,1,current-1));
+              writeln(fOut,copy(line,current,1));
+              delete(line,1,current);
+              current:=1;
+              if line='' then break;
+              end;
+
+            if line[current]='"' then
+              begin
+              delete(line,current,1);
+              current:=current-1;
+              quotes:=true;
+              end;
+
+            if line[current]=#39 then
+              begin
+              delete(line,current,1);
+              current:=current-1;
+              quote:=true;
+              end;
+
+            if (line[current]='#') then
+              begin
+              current:=current-1;
+              oneLineComment:=true;
+              end;
+
+            if ((line[current]='/') and (line[current+1]='/')) then
+              begin
+              current:=current-2;
+              oneLineComment:=true;
+              end;
+
+            if (line[current]='*') and (line[current-1]='/') then
+              begin
+              current:=current-2;
+              ManyLineComment:=true;
+              end
+
+            end;
+         current:=current+1;
+         end;
+     writeln(fOut,line);
+     end;
+   close(fOut);
+   close(fIn);
+   end;
+
+ function FindToken(var crr: integer; const line:string): string;
+   begin
+    result:='';
+    while ((line[crr]=' ') or (line[crr]='(') or (line[crr]=')')
+    or (line[crr]=',') or (line[crr]=';')) and (crr<=length(line)) do crr:=crr+1;
+    while (line[crr]<>' ') and (line[crr]<>'(') and (line[crr]<>')')
+    and (line[crr]<>',') and (line[crr]<>';') and (crr<=length(line)) do
+      begin
+      result:=result+line[crr];
+      crr:=crr+1;
+      end;
+   end;
+
+  procedure includeInArrayVariable(NameVariable: string;var Number: integer; var ArrayVariable:TarrNameVariable);
+    begin
+    Number:=Number+1;
+    ArrayVariable[Number]:=NameVariable;
+    end;
+
+  function FindVariable(const Variable:string;
+  const ArrayVariable: TarrNameVariable;
+  const numberVariable:integer; var ArraySumVariable:TArrSumVariable):boolean;
+  var
+  i: integer;
+   begin
+   result:=false;
+
+   for i:=1 to numberVariable do
+    if Variable=ArrayVariable[i] then
+      begin
+      result:=true;
+      ArraySumVariable[i]:=ArraySumVariable[i]+1;
+      break;
+      end;
+   end;
+
+  //procedure SumGlobalWithLocal(ArrayNameGlobalVariableForFunction,ArrayNameLocalVariable,numberGlobalVariableForFunction,numberLocalVariable,ArraySumGlobalVariableForFunction,ArraySumLocalVariable);
+    var
+    begin
+
+    end;
+
+  procedure Variable(const ArrayNameGlobalVariable:TArrNameVariable;
+  const numberGlobalVariable: integer; var ArraySumGlobalVariable:TArrSumVariable);
+  var
+  ArrayNameLocalVariable:TArrNameVariable;
+  ArraySumLocalVariable:TArrSumVariable;
+  ArraySumGlobalVariableForFunction:TArrSumVariable;
+  ArrayNameGlobalVariableForFunction:TArrSumVariable;
+  numberGlobalVariableForFunction: integer;
+  functionFlag:boolean;
+  numberLocalVariable,level,i:integer;
+  NameFunction:string;
+
+    begin
+    numberLocalVariable:=0;
+    numberGlobalVariableForFunction:=0;
+    functionFlag:=false;
+    level:=1;
+    for i:=1 to 250 do ArraySumLocalVariable[i]:=0;
+
+    while not Eof(F) do
+     begin
+     readln(f,line);
+     Trim(line);
+     Current:=1;
+     while (Current <= Length(line)) do
+       begin
+       Token:=FindToken(current,line);
+       if Token<>'' then
+        begin
+        if token='function' then
+          begin
+          NameFunction:='';
+          while NameFunction='' do NameFunction:=FindToken(current,line);
+          functionFlag:=true;
+          end;
+        if ((token='{') and functionFlag) then
+          begin
+          writeln(NameFunction,':');
+          writeln;
+          Variable(ArrayNameGlobalVariableForFunction,numberGlobalVariableForFunction,ArraySumGlobalVariableForFunction);
+          writeln('end ',NameFunction);
+          writeln;
+          functionFlag:=false;
+          level:=level+1;
+          //SumGlobalWithLocal(ArrayNameGlobalVariableForFunction,ArrayNameLocalVariable,numberGlobalVariableForFunction,numberLocalVariable,ArraySumGlobalVariableForFunction,ArraySumLocalVariable);
+          end;
+        if (Token[1]='$') then
+          begin
+          if ((not FindVariable(Token,ArrayNameLocalVariable,numberLocalVariable,ArraySumLocalVariable))
+            and (not FindVariable(Token,ArrayNameGlobalVariable,numberGlobalVariable,ArraySumGlobalVariable)))
+            then includeInArrayVariable(Token,numberLocalVariable,ArrayNameLocalVariable);
+          if functionFlag then includeInArrayVariable(Token,numberGlobalVariableForFunction,ArrayNameGlobalVariableForFunction)
+          end;
+        if (token='{') then level:=level+1;
+        if (token='}') or (token='?>') then level:=level-1;
+        if level=0 then
+          begin
+          for i:=1 to numberLocalVariable do writeln(ArrayNameLocalVariable[i],'=',ArraySumLocalVariable[i]);
+          writeln;
+          exit;
+          end;
+        end;
+       end;
+     Current:=1;
+     end;
+
+    end;
+
+
+begin
+   CreateClearFile();
+
+   assign(f,'phpClear.txt');
+   reset(f);
+   writeln('Main:');
+   writeln;
+   Variable(ArrayNameLocalVariable,0,ArraySumLocalVariable);
+   writeln('End Main');
+   close(f);
+
+   readln;
+end.
